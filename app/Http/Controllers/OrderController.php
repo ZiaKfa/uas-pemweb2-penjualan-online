@@ -41,7 +41,7 @@ class OrderController extends Controller
 
         $newOrder->products()->attach($request->product_id);
 
-        return redirect()->route('order.index');
+        return redirect()->route('order.index')->with('status', 'Order created successfully');
     }
     public function show(Order $order) : View
     {
@@ -53,9 +53,11 @@ class OrderController extends Controller
 
     public function edit(Order $order) : View
     {
+        $products = Product::all();
         return view('order.edit', [
             'order' => $order,
-            'title' => 'Edit Order'
+            'title' => 'Edit Order',
+            'products' => $products
         ]);
     }
 
@@ -66,14 +68,20 @@ class OrderController extends Controller
             'quantity' => 'required',
             'invoice' => 'required'
         ]);
-        $order->update($request->all());
-        return redirect()->route('order.index');
+        $order->update([
+            'invoice' => $request->invoice,
+            'quantity' => $request->quantity,
+            'status' => 'unpaid',
+            'user_id' => auth()->id()
+        ]);
+        $order->products()->sync($request->product_id);
+        return redirect()->route('order.index')->with('status', 'Order updated successfully');
     }
 
     public function destroy(Order $order)
     {
         $order->delete();
-        return redirect()->route('order.index');
+        return redirect()->route('order.index')->with('status', 'Order deleted successfully');
     }
 
 
