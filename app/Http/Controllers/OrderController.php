@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,9 @@ class OrderController extends Controller
 {
     public function index() : View
     {
+        if(!Auth::check()){
+            return view('auth.login');
+        }
         $orders = Order::where('user_id', auth()->id())->paginate(5);
         return view('order.index',[
             'orders' => $orders,
@@ -19,6 +23,9 @@ class OrderController extends Controller
     }
     public function create() : View
     {
+        if(!Auth::check()){
+            return view('auth.login');
+        }
         $products = Product::all();
         return view('order.create',[
             'title' => 'Create Order',
@@ -27,6 +34,9 @@ class OrderController extends Controller
     }
     public function store(Request $request)
     {
+        if(!Auth::check()){
+            return redirect()->route('login');
+        }
         $request->validate([
             'product_id' => 'required',
             'quantity' => 'required',
@@ -45,6 +55,9 @@ class OrderController extends Controller
     }
     public function show(Order $order) : View
     {
+        if(!Auth::check()){
+            return view('auth.login');
+        }
         return view('order.show',[
             'order' => $order,
             'title' => 'Order Details'
@@ -53,6 +66,9 @@ class OrderController extends Controller
 
     public function edit(Order $order) : View
     {
+        if(!Auth::check()){
+            return view('auth.login');
+        }
         $products = Product::all();
         return view('order.edit', [
             'order' => $order,
@@ -63,6 +79,9 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
+        if(!Auth::check()){
+            return redirect()->route('login');
+        }
         $request->validate([
             'product_id' => 'required',
             'quantity' => 'required',
@@ -80,6 +99,9 @@ class OrderController extends Controller
 
     public function destroy(Order $order)
     {
+        if(!Auth::check()){
+            return redirect()->route('login');
+        }
         $order->delete();
         return redirect()->route('order.index')->with('status', 'Order deleted successfully');
     }
