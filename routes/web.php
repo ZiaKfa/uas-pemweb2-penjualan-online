@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbilityController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PokemonController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('/product', ProductController::class);
 Route::resource('/order',OrderController::class);
+Route::resource('/payment',PaymentController::class);
 
 
 require __DIR__.'/auth.php';
